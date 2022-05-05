@@ -281,7 +281,7 @@ public class MainGame : MonoBehaviour
                 EndGame();
         }
 
-        else if (defendingCell.character.data.CanAttackAtRange(distance))
+        else if (defendingCell.character.data.weapons[0].AttackRanges.Contains(distance))
         {
             defendingCell.character.Attack(attackingCell.character);
 
