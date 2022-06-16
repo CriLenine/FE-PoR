@@ -19,13 +19,15 @@ public class CharacterData
         Enemy
     }
 
+    [SerializeField] private GameObject _prefab;
     [SerializeField] private CharacterClass _class;
     [SerializeField] private CharacterTeam _team;
     [SerializeField] private string _name;
     [SerializeField] private int _range;
     [SerializeField] private int _maxHealth;
     [SerializeField] private Vector2Int _startPosition;
-    
+
+    public GameObject Prefab => _prefab;
     public CharacterClass Class => _class;
     public CharacterTeam Team => _team;
     public string Name => _name;
@@ -46,11 +48,4 @@ public class CharacterData
     {
         return weapons.Any(weapon => weapon != null && weapon.AttackRanges.Contains(range));
     }
-}
-
-[Serializable]
-public class CharacterPrefab
-{
-    public GameObject Prefab;
-    public string name;
 }

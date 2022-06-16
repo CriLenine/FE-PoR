@@ -5,7 +5,6 @@ using UnityEngine;
 public class Map : MonoBehaviour
 {
     public int width = 25, height = 25;
-    public Action<MapCell> OnMapCellClicked;
     public enum CellType
     {
         None,
@@ -26,6 +25,7 @@ public class Map : MonoBehaviour
     [SerializeField] private float _cellSize = 1.5f;
     [SerializeField] private Transform _mapStart;
     [SerializeField] private GameObject _prefabCell;
+    [SerializeField] private GameObject _prefabTree;
     private MapCell[,] _grid;
 
     public float Altitude => _altitude;
@@ -40,27 +40,55 @@ public class Map : MonoBehaviour
     }
 
 
-    public void Initialize()
+    public void Initialize(List<Vector2Int> condemnedCells = null)
     {
+        condemnedCells ??= _condemnedCells;
         for (int x = 0; x < height; x++)
         {
             for (int y = 0; y < width; y++)
             {
-                if (_condemnedCells.Contains(new Vector2Int(x, y)))
-                    continue;
-
                 Vector3 position = GetWorldPosition(x, y);
                 position.y = _altitude;
-                GameObject cellGo = GameObject.Instantiate(_prefabCell, position, Quaternion.identity);
+
+                if (condemnedCells.Contains(new Vector2Int(x, y)))
+                {
+                    Instantiate(_prefabTree, position, Quaternion.Euler(0f, UnityEngine.Random.value * 360f, 0f));
+                    continue;
+                }
+
+                GameObject cellGo = Instantiate(_prefabCell, position, Quaternion.identity);
                 MapCell cell = cellGo.GetComponent<MapCell>();
                 cell.position = new Vector2Int(x, y);
                 cell.type = CellType.None;
                 _grid[x, y] = cell;
-                cell.onClick += OnCellClicked;
                 cellGo.transform.SetParent(transform);
             }
         }
-        ResetPathfindingGrid();
+
+        if(MainGame.instance)
+            ResetPathfindingGrid();
+    }
+
+    public List<Character> InitCharacters(List<(CharacterData, Vector2Int)> _characters, float charactersAltitude)
+    {
+        List<Character> characters = new List<Character>();
+        foreach ((CharacterData data, Vector2Int pos) in _characters)
+        {
+            GameObject characterGo = Instantiate(
+                data.Prefab,
+                GetWorldPosition(pos) + Vector3.up * charactersAltitude,
+                Quaternion.identity
+                );
+
+            Character character = characterGo.GetComponent<Character>();
+            character.data = data;
+
+            characters.Add(character);
+
+            MapCell cell = GetCell(data.position);
+            cell.character = character;
+        }
+        return characters;
     }
 
     public void ResetPathfindingGrid()
@@ -73,11 +101,6 @@ public class Map : MonoBehaviour
         }
     }
 
-    void OnCellClicked(MapCell cell)
-    {
-        OnMapCellClicked?.Invoke(cell);
-    }
-
     public MapCell GetCell(int xGrid, int yGrid)
     {
         return _grid[xGrid, yGrid];
@@ -85,6 +108,12 @@ public class Map : MonoBehaviour
     public MapCell GetCell(Vector2Int posGrid)
     {
         return GetCell(posGrid.x, posGrid.y);
+    }
+    public MapCell GetCell(float x, float z)
+    {
+        int xGrid = Mathf.RoundToInt((x - _mapStart.position.x) / _cellSize);
+        int yGrid = Mathf.RoundToInt((z - _mapStart.position.z) / _cellSize);
+        return GetCell(xGrid, yGrid);
     }
 
     public Vector3 GetWorldPosition(int xGrid, int yGrid)

@@ -3,19 +3,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Character : MonoBehaviour, IPointerClickHandler
+public class Character : MonoBehaviour
 {
     public CharacterData data;
-    public Action<Character> OnClick;
     [SerializeField] private TextMeshProUGUI _dodgeText;
     [SerializeField] private float _destroySpeed = 1.5f;
     [SerializeField] private GameObject _onHitParticleSystemPrefab;
 
     #region DISPLAYING
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        OnClick?.Invoke(this);
-    }
 
     private void OnMouseOver()
     {

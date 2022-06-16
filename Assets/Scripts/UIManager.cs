@@ -91,7 +91,7 @@ public class UIManager : MonoBehaviour
 
     void OnGUI()
     {
-        if (MainGame.instance.DisplayActionMenu)
+        if (MainGame.instance && MainGame.instance.DisplayActionMenu)
         {
             Vector2 position = Camera.main.WorldToScreenPoint(MainGame.instance.ActionMenuAnchor);
             position.y = Screen.height - position.y;

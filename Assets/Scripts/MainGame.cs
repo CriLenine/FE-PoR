@@ -17,8 +17,7 @@ public class MainGame : MonoBehaviour
     }
 
     [SerializeField] private Map _map;
-    [SerializeField] private List<CharacterData> _startCharacters;
-    [SerializeField] private CharacterPrefab[] _prefabCharacters;
+    [SerializeField] private List<(CharacterData, Vector2Int)> _startCharacters;
     [SerializeField] private float _charactersAltitude = 1f;
     [SerializeField] private float _characterSpeed = 5f;
     [SerializeField] private Animator _anim;
@@ -58,40 +57,36 @@ public class MainGame : MonoBehaviour
         _astarMain = new AStar.Main();
 
         _map.Initialize();
-        _map.OnMapCellClicked += OnCellClicked;
 
-        InitCharacters();
+        _allCharacters = _map.InitCharacters(_startCharacters, _charactersAltitude);
+        foreach(Character character in _allCharacters)
+        {
+            if (character.data.Team == _currentTeam)
+                _charactersToPlay.Add(character);
+        }
 
         UIManager.instance.phaseText.text = "Ally phase";
         UIManager.instance.phaseText.color = new Color(0, 96, 231);
-
-        void InitCharacters()
-        {
-            foreach (var characterData in _startCharacters)
-            {
-                GameObject characterGo = Instantiate(
-                    GetPrefab(characterData),
-                    _map.GetWorldPosition(characterData.position) + Vector3.up * _charactersAltitude,
-                    Quaternion.identity
-                    );
-
-                Character character = characterGo.GetComponent<Character>();
-                character.data = characterData;
-                character.OnClick += OnCharacterClicked;
-
-                if (characterData.Team == _currentTeam)
-                    _charactersToPlay.Add(character);
-                _allCharacters.Add(character);
-
-                MapCell cell = _map.GetCell(characterData.position);
-                cell.character = character;
-            }
-        }
     }
 
 
     private void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hitInfo))
+            {
+                Character character = hitInfo.transform.GetComponent<Character>();
+                if(character)
+                    OnCharacterClicked(character);
+                else
+                {
+                    MapCell cell = hitInfo.transform.GetComponent<MapCell>();
+                    if(cell)
+                        OnCellClicked(cell);
+                }
+            }
+        }
         if (_whereToMove.Count > 0) //when we command a character to move
         {
             if (!_isMoving)
@@ -363,17 +358,6 @@ public class MainGame : MonoBehaviour
                 }
             }
         }
-    }
-
-    private GameObject GetPrefab(CharacterData data)
-    {
-        foreach (var prefabCharacter in _prefabCharacters)
-        {
-            if (data.Name == prefabCharacter.name)
-                return prefabCharacter.Prefab;
-        }
-
-        throw new System.Exception($"Can't find prefab of {data.Name}");
     }
 
     private bool AreSameMaterial(Material mat1, Material mat2)
