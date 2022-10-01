@@ -11,6 +11,30 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2c3d302834d6bee4fa1b436421728af5, type: 2}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data._name
+      value: Ike
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data._range
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data.damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data._maxHealth
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data.dodgeChance
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data.weapons.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: b741da55b59eac44a8a071dc1ab4956a, type: 2}
     - target: {fileID: 5082063035780552125, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
       propertyPath: m_RootOrder
       value: 0

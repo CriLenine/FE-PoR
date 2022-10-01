@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1084,6 +1084,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 589451147}
+  - component: {fileID: 589451148}
   - component: {fileID: 589451146}
   m_Layer: 0
   m_Name: MainGame
@@ -1105,11 +1106,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _map: {fileID: 1141361741}
-  _charactersAltitude: 1
+  _startCharacters:
+  - _prefab: {fileID: 1733415109823068618, guid: 8a86e5b848db1fe4ca7bb225cf79e99e, type: 3}
+    _class: 1
+    _team: 1
+    _name: Ashnard
+    _range: 10
+    _maxHealth: 40
+    _startPosition: {x: 3, y: 10}
+    damage: 8
+    dodgeChance: 5
+    weapons:
+    - {fileID: 11400000, guid: 6da83e5b2f2d8c047b8da0f83a244566, type: 2}
+    currentHealth: 0
+    position: {x: 0, y: 0}
+  - _prefab: {fileID: 8727662940574248728, guid: 81b224c27debd5d439eb4bd0c126a792, type: 3}
+    _class: 0
+    _team: 0
+    _name: Ike
+    _range: 10
+    _maxHealth: 40
+    _startPosition: {x: 3, y: 15}
+    damage: 8
+    dodgeChance: 5
+    weapons:
+    - {fileID: 11400000, guid: b741da55b59eac44a8a071dc1ab4956a, type: 2}
+    currentHealth: 0
+    position: {x: 0, y: 0}
   _characterSpeed: 5
   _anim: {fileID: 1834336440}
-  _weapons:
-  - {fileID: 11400000, guid: b741da55b59eac44a8a071dc1ab4956a, type: 2}
 --- !u!4 &589451147
 Transform:
   m_ObjectHideFlags: 0
@@ -1124,6 +1149,18 @@ Transform:
   m_Father: {fileID: 1361747932}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &589451148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589451145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45667e6780f82ba4b93b9463f7736b3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &595727517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1910,6 +1947,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 907046053}
+  - component: {fileID: 907046055}
   - component: {fileID: 907046054}
   m_Layer: 0
   m_Name: UIManager
@@ -1941,26 +1979,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 907046052}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f48b131fa68f064ba1e1f28191a8931, type: 3}
+  m_Script: {fileID: 11500000, guid: 9672cd6e6b67e5b429e59b2b65b81344, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseText: {fileID: 1834336438}
-  characterInfoPanel: {fileID: 1978286504}
-  characterName: {fileID: 731351170}
-  characterClass: {fileID: 700084645}
-  characterHP: {fileID: 229776805}
-  attackerInfoPanel: {fileID: 2549000}
-  attackerName: {fileID: 384695033}
-  attackerClass: {fileID: 1780050296}
-  attackerHP: {fileID: 843955065}
-  attackerDamage: {fileID: 558443487}
-  attackerDodgeChance: {fileID: 1890733164}
-  defenderInfoPanel: {fileID: 447901236}
-  defenderName: {fileID: 673992617}
-  defenderClass: {fileID: 2068325865}
-  defenderHP: {fileID: 1870287276}
-  defenderDamage: {fileID: 1965059028}
-  defenderDodgeChance: {fileID: 1246908261}
+  phaseText: {fileID: 0}
+  characterInfoPanel: {fileID: 0}
+  characterName: {fileID: 0}
+  characterClass: {fileID: 0}
+  characterHP: {fileID: 0}
+  attackerInfoPanel: {fileID: 0}
+  attackerName: {fileID: 0}
+  attackerClass: {fileID: 0}
+  attackerHP: {fileID: 0}
+  attackerDamage: {fileID: 0}
+  attackerDodgeChance: {fileID: 0}
+  defenderInfoPanel: {fileID: 0}
+  defenderName: {fileID: 0}
+  defenderClass: {fileID: 0}
+  defenderHP: {fileID: 0}
+  defenderDamage: {fileID: 0}
+  defenderDodgeChance: {fileID: 0}
+--- !u!114 &907046055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907046052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd4964b0079dd184ebe754bcfaeb8082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -2059,7 +2109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 10
-  _scrollSpeed: 10
+  _offset: {x: 100, y: 15.38, z: 51.76}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2250,8 +2300,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91ca56b6e66130e40a2a7a7b4e1fe544, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 25
-  height: 25
+  Width: 25
+  Height: 25
   _materials:
   - type: 0
     material: {fileID: 2100000, guid: 8bb2dd40d554c4a4880b57e73a2fc505, type: 2}
@@ -2260,6 +2310,7 @@ MonoBehaviour:
   - type: 2
     material: {fileID: 2100000, guid: 6149980533263974dac049a78ea2d977, type: 2}
   _altitude: 0.2
+  _charactersAltitude: 1
   _condemnedCells:
   - {x: 6, y: 8}
   - {x: 14, y: 13}

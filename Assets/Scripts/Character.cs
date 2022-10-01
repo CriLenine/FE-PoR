@@ -1,7 +1,6 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class Character : MonoBehaviour
 {
@@ -9,25 +8,6 @@ public class Character : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _dodgeText;
     [SerializeField] private float _destroySpeed = 1.5f;
     [SerializeField] private GameObject _onHitParticleSystemPrefab;
-
-    #region DISPLAYING
-
-    private void OnMouseOver()
-    {
-        UIManager.instance.DisplayCharacterInfos(data);
-        if (MainGame.instance.Step == MainGame.GameStep.ChoosingTarget && data.Team != MainGame.instance.CurrentData.Team)
-            UIManager.instance.DisplayAttackInfos(data);
-        else
-            UIManager.instance.HideAttackInfos();
-    }
-
-    private void OnMouseExit()
-    {
-        UIManager.instance.HideInfos();
-        UIManager.instance.HideAttackInfos();
-    }
-
-    #endregion
 
     public void Attack(Character enemy)
     {

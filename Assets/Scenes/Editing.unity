@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1611,6 +1611,7 @@ GameObject:
   m_Component:
   - component: {fileID: 907046053}
   - component: {fileID: 907046054}
+  - component: {fileID: 907046055}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -1641,26 +1642,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 907046052}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f48b131fa68f064ba1e1f28191a8931, type: 3}
+  m_Script: {fileID: 11500000, guid: dd4964b0079dd184ebe754bcfaeb8082, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseText: {fileID: 1834336438}
-  characterInfoPanel: {fileID: 1978286504}
-  characterName: {fileID: 731351170}
-  characterClass: {fileID: 700084645}
-  characterHP: {fileID: 229776805}
-  attackerInfoPanel: {fileID: 0}
-  attackerName: {fileID: 0}
-  attackerClass: {fileID: 0}
-  attackerHP: {fileID: 0}
-  attackerDamage: {fileID: 0}
-  attackerDodgeChance: {fileID: 0}
-  defenderInfoPanel: {fileID: 0}
-  defenderName: {fileID: 0}
-  defenderClass: {fileID: 0}
-  defenderHP: {fileID: 0}
-  defenderDamage: {fileID: 0}
-  defenderDodgeChance: {fileID: 0}
+--- !u!114 &907046055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907046052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a75983ecec503bc4fa190e3f650bfd0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1758,8 +1754,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36ef999f452f6b241ad68f028736702f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 10
-  _scrollSpeed: 10
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1940,7 +1934,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1004194687}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 589451148}
+        m_TargetAssemblyTypeName: EditMode, Assembly-CSharp
+        m_MethodName: DisplayMenu
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1004194687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2305,7 +2311,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1331351659}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 589451148}
+        m_TargetAssemblyTypeName: EditMode, Assembly-CSharp
+        m_MethodName: DisplayMenu
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1331351659
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -17,6 +17,11 @@ public class PrefabManager : MonoBehaviour
 
     public static Dictionary<string, GameObject> Prefabs = new Dictionary<string, GameObject>();
 
+    private void Awake()
+    {
+        _instance = this;
+    }
+
     private void Start()
     {
         foreach(PrefabInfo prefabInfo in PrefabInfos)

@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Map : MonoBehaviour
 {
-    public int width = 25, height = 25;
+    public int Width = 25, Height = 25;
     public enum CellType
     {
         None,
         CanMoveTo,
         CanAttack
     }
-    public Dictionary<CellType, Material> cellMaterials = new Dictionary<CellType, Material>();
+    public Dictionary<CellType, Material> CellMaterials = new Dictionary<CellType, Material>();
 
     [Serializable]
     private struct TaggedMaterial
@@ -21,6 +21,7 @@ public class Map : MonoBehaviour
     }
     [SerializeField] private TaggedMaterial[] _materials;
     [SerializeField] private float _altitude;
+    [SerializeField] private float _charactersAltitude = 1f;
     [SerializeField] private List<Vector2Int> _condemnedCells = new List<Vector2Int>();
     [SerializeField] private float _cellSize = 1.5f;
     [SerializeField] private Transform _mapStart;
@@ -29,23 +30,24 @@ public class Map : MonoBehaviour
     private MapCell[,] _grid;
 
     public float Altitude => _altitude;
+    public float CharactersAltitude => _charactersAltitude;
+    public List<Vector2Int> CondemnedCells => _condemnedCells;
 
     private void Awake()
     {
-        _grid = new MapCell[width, height];
+        _grid = new MapCell[Width, Height];
         foreach (TaggedMaterial mat in _materials)
         {
-            cellMaterials.Add(mat.type, mat.material);
+            CellMaterials.Add(mat.type, mat.material);
         }
     }
-
 
     public void Initialize(List<Vector2Int> condemnedCells = null)
     {
         condemnedCells ??= _condemnedCells;
-        for (int x = 0; x < height; x++)
+        for (int x = 0; x < Height; x++)
         {
-            for (int y = 0; y < width; y++)
+            for (int y = 0; y < Width; y++)
             {
                 Vector3 position = GetWorldPosition(x, y);
                 position.y = _altitude;
@@ -56,27 +58,34 @@ public class Map : MonoBehaviour
                     continue;
                 }
 
-                GameObject cellGo = Instantiate(_prefabCell, position, Quaternion.identity);
-                MapCell cell = cellGo.GetComponent<MapCell>();
-                cell.position = new Vector2Int(x, y);
-                cell.type = CellType.None;
-                _grid[x, y] = cell;
-                cellGo.transform.SetParent(transform);
+                AddCell(x, y);
             }
         }
 
-        if(MainGame.instance)
+        if(MainManager.GameManager)
             ResetPathfindingGrid();
     }
 
-    public List<Character> InitCharacters(List<(CharacterData, Vector2Int)> _characters, float charactersAltitude)
+    private void AddCell(int x, int y)
+    {
+        Vector3 position = GetWorldPosition(x, y);
+        position.y = _altitude;
+
+        GameObject cellGo = Instantiate(_prefabCell, position, Quaternion.identity);
+        MapCell cell = cellGo.GetComponent<MapCell>();
+        cell.Initialize(new Vector2Int(x, y), CellType.None);
+        _grid[x, y] = cell;
+        cellGo.transform.SetParent(transform);
+    }
+
+    public List<Character> InitCharacters(List<CharacterData> _characters)
     {
         List<Character> characters = new List<Character>();
-        foreach ((CharacterData data, Vector2Int pos) in _characters)
+        foreach (CharacterData data in _characters)
         {
             GameObject characterGo = Instantiate(
                 data.Prefab,
-                GetWorldPosition(pos) + Vector3.up * charactersAltitude,
+                GetWorldPosition(data.StartPosition) + Vector3.up * _charactersAltitude,
                 Quaternion.identity
                 );
 
@@ -86,18 +95,18 @@ public class Map : MonoBehaviour
             characters.Add(character);
 
             MapCell cell = GetCell(data.position);
-            cell.character = character;
+            cell.Character = character;
         }
         return characters;
     }
 
     public void ResetPathfindingGrid()
     {
-        MainGame.instance.pathfindingGrid = new AStar.Grid(width, height);
-        MainGame.instance.pathfindingGrid.FreeAllSpace();
+        MainManager.GameManager.pathfindingGrid = new AStar.Grid(Width, Height);
+        MainManager.GameManager.pathfindingGrid.FreeAllSpace();
         foreach (Vector2Int pos in _condemnedCells)
         {
-            MainGame.instance.pathfindingGrid.AddObstacle(pos);
+            MainManager.GameManager.pathfindingGrid.AddObstacle(pos);
         }
     }
 
@@ -125,5 +134,15 @@ public class Map : MonoBehaviour
     public Vector3 GetWorldPosition(Vector2Int posGrid)
     {
         return GetWorldPosition(posGrid.x, posGrid.y);
+    }
+
+    public bool IsValidMove(Vector2Int coords, Vector2Int shift, out Vector2Int newCoords)
+    {
+        newCoords = coords + shift;
+        bool valid = !(newCoords.x < 0 || newCoords.y < 0 || newCoords.x > Width || newCoords.y > Height);
+        if(valid)
+            return true;
+        newCoords = coords;
+        return false;
     }
 }

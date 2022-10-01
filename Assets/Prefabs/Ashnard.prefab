@@ -11,6 +11,38 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 890c6eeb0c1d8a1409f869e89dec2002, type: 2}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data._name
+      value: Ashnard
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data._team
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data._class
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data._range
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data.damage
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data._maxHealth
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data.dodgeChance
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data.weapons.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 6da83e5b2f2d8c047b8da0f83a244566, type: 2}
     - target: {fileID: 5082063035780552125, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
       propertyPath: m_RootOrder
       value: 0
