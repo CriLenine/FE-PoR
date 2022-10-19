@@ -14,13 +14,15 @@ public class UIManagerP : MonoBehaviour
     public TextMeshProUGUI attackerClass;
     public TextMeshProUGUI attackerHP;
     public TextMeshProUGUI attackerDamage;
-    public TextMeshProUGUI attackerDodgeChance;
+    public TextMeshProUGUI attackerAccuracy;
+    public TextMeshProUGUI attackerCrit;
     public Image defenderInfoPanel;
     public TextMeshProUGUI defenderName;
     public TextMeshProUGUI defenderClass;
     public TextMeshProUGUI defenderHP;
     public TextMeshProUGUI defenderDamage;
-    public TextMeshProUGUI defenderDodgeChance;
+    public TextMeshProUGUI defenderAccuracy;
+    public TextMeshProUGUI defenderCrit;
 
     private void Start()
     {
@@ -28,14 +30,15 @@ public class UIManagerP : MonoBehaviour
         phaseText.color = MainManager.Red;
     }
 
-    public void DisplayCharacterInfos(CharacterData data)
+    public void DisplayCharacterInfos(Character character)
     {
+        CharacterData data = character.Data;
         characterInfoPanel.CrossFadeAlpha(0.8f, 0.5f, false);
         characterInfoPanel.color =
-            data.Team == CharacterData.CharacterTeam.Ally ? MainManager.Red : MainManager.Blue;
+            character.Data.Team == CharacterData.CharacterTeam.Ally ? MainManager.Red : MainManager.Blue;
         characterName.text = data.Name;
         characterClass.text = data.Class.ToString();
-        characterHP.text = $"HP : {data.currentHealth}/{data.MaxHealth}";
+        characterHP.text = $"HP : {character.CurrentHealth}/{data.MaxHealth}";
     }
 
     public void HideInfos()
@@ -52,37 +55,44 @@ public class UIManagerP : MonoBehaviour
         defenderClass.text = "";
         defenderHP.text = "";
         defenderDamage.text = "";
-        defenderDodgeChance.text = "";
+        defenderAccuracy.text = "";
+        defenderCrit.text = "";
 
         attackerInfoPanel.CrossFadeAlpha(0f, 0.5f, false);
         attackerName.text = "";
         attackerClass.text = "";
         attackerHP.text = "";
         attackerDamage.text = "";
-        attackerDodgeChance.text = "";
+        attackerAccuracy.text = "";
+        attackerCrit.text = "";
     }
 
-    public void DisplayAttackInfos(CharacterData defenderData)
+    public void DisplayAttackInfos(Character attacker, Character defender)
     {
+        (int damage, int battleAccuracy, int battleCriticalRate) = defender.Data.FightInfos(attacker);
+        int attackSpeedDelta = attacker.Data.AttackSpeed - defender.Data.AttackSpeed;
+
         defenderInfoPanel.CrossFadeAlpha(0.8f, 0.5f, false);
         defenderInfoPanel.color =
-            defenderData.Team == CharacterData.CharacterTeam.Ally ? MainManager.Red : MainManager.Blue;
-        defenderName.text = defenderData.Name;
-        defenderClass.text = defenderData.Class.ToString();
-        defenderHP.text = $"HP : {defenderData.currentHealth}/{defenderData.MaxHealth}";
-        defenderDamage.text = $"Damage : {defenderData.damage}";
-        defenderDodgeChance.text = $"Dodge Chance : {defenderData.dodgeChance}";
+            defender.Data.Team == CharacterData.CharacterTeam.Ally ? MainManager.Red : MainManager.Blue;
+        defenderName.text = defender.Data.Name;
+        defenderClass.text = defender.Data.Class.ToString();
+        defenderHP.text = $"HP : {defender.CurrentHealth}/{defender.Data.MaxHealth}";
+        defenderDamage.text = $"Damage : {damage} {(attackSpeedDelta < -3 ? "x 2" : "")}";
+        defenderAccuracy.text = $"Accuracy : {battleAccuracy}";
+        defenderCrit.text = $"Crit : {battleCriticalRate}";
 
-        CharacterData attackerData = MainManager.GameManager.CurrentData;
+        (damage, battleAccuracy, battleCriticalRate) = attacker.Data.FightInfos(defender);
 
         attackerInfoPanel.CrossFadeAlpha(0.8f, 0.5f, false);
         attackerInfoPanel.color =
-            attackerData.Team == CharacterData.CharacterTeam.Ally ? MainManager.Red : MainManager.Blue;
-        attackerName.text = attackerData.Name;
-        attackerClass.text = attackerData.Class.ToString();
-        attackerHP.text = $"HP : {attackerData.currentHealth}/{attackerData.MaxHealth}";
-        attackerDamage.text = $"Damage : {attackerData.damage}";
-        attackerDodgeChance.text = $"Dodge Chance : {attackerData.dodgeChance}";
+            attacker.Data.Team == CharacterData.CharacterTeam.Ally ? MainManager.Red : MainManager.Blue;
+        attackerName.text = attacker.Data.Name;
+        attackerClass.text = attacker.Data.Class.ToString();
+        attackerHP.text = $"HP : {attacker.CurrentHealth}/{attacker.Data.MaxHealth}";
+        attackerDamage.text = $"Damage : {damage}";
+        attackerAccuracy.text = $"Accuracy : {battleAccuracy}";
+        attackerCrit.text = $"Crit : {battleCriticalRate}";
     }
 
     void OnGUI()
@@ -111,9 +121,9 @@ public class UIManagerP : MonoBehaviour
             GUILayout.EndArea();
         }
 
-        if (EditManager.instance && EditManager.instance.PrefabMenu.display)
+        if (EditManager.Instance && EditManager.Instance.PrefabMenu.display)
         {
-            Vector2 position = EditManager.instance.PrefabMenu.anchor;
+            Vector2 position = EditManager.Instance.PrefabMenu.anchor;
             position.y = Screen.height - position.y;
             GUILayout.BeginArea(new Rect(position.x, position.y, Screen.width * 0.2f, Screen.height * 0.4f), GUI.skin.box);
 
@@ -121,9 +131,9 @@ public class UIManagerP : MonoBehaviour
 
             foreach(string prefabName in PrefabManager.Prefabs.Keys)
             {
-                if (PrefabManager.Prefabs[prefabName].GetComponent<Character>()?.data.Team == EditManager.instance.PrefabMenu.team)
+                if (PrefabManager.Prefabs[prefabName].GetComponent<Character>()?.Data.Team == EditManager.Instance.PrefabMenu.team)
                     if (GUILayout.Button(prefabName))
-                        EditManager.instance.CreatePrefab(prefabName);
+                        EditManager.Instance.CreatePrefab(prefabName);
             }
             GUILayout.EndArea();
         }

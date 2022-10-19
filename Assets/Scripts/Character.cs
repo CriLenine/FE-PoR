@@ -4,20 +4,34 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    public CharacterData data;
+    public CharacterData Data;
+    public Vector2Int Position;
+
     [SerializeField] private TextMeshProUGUI _dodgeText;
     [SerializeField] private float _destroySpeed = 1.5f;
     [SerializeField] private GameObject _onHitParticleSystemPrefab;
 
+    public int CurrentHealth { get; private set; }
+
+    private void Start()
+    {
+        CurrentHealth = Data.MaxHealth;
+        Position = Data.StartPosition;
+    }
+
     public void Attack(Character enemy)
     {
-        if (UnityEngine.Random.value > (float)enemy.data.dodgeChance / 100)
+        (int damage, int battleAccuracy, int battleCriticalRate) = Data.FightInfos(enemy);
+        if (UnityEngine.Random.value * 100 < battleAccuracy)
         {
-            enemy.data.currentHealth -= data.damage + data.weapons[0].Damage;
-            if (--data.weapons[0].currentDurability == 0)
+            bool physical = Data.Weapon.DamageType == Weapon.DamageNature.Physical;
+
+            bool critical = battleCriticalRate > UnityEngine.Random.value * 100;
+
+            enemy.TakeDamage(damage, physical, critical);
+            if (--Data.Weapon.CurrentDurability == 0)
             {
-                for (int i = 0; i < data.weapons.Length - 1; i++)
-                    data.weapons[i] = data.weapons[i + 1];
+                Data.DeleteWeapon();
             }
 
             GameObject particleGo = Instantiate(_onHitParticleSystemPrefab, enemy.transform.position, Quaternion.identity);
@@ -33,5 +47,10 @@ public class Character : MonoBehaviour
             textGo.transform.SetParent(FindObjectOfType<Canvas>().transform);
             Destroy(textGo, _destroySpeed);
         }
+    }
+
+    public void TakeDamage(int damage, bool physical, bool critical)
+    {
+        CurrentHealth -= damage * (critical ? 3 : 1);
     }
 }

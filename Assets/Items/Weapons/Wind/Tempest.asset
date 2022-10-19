@@ -12,11 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8db481bd6a1f74b4a81add95c2c09b8f, type: 3}
   m_Name: Tempest
   m_EditorClassIdentifier: 
-  currentDurability: 0
+  CurrentDurability: 0
   _name: Tempest
   _type: 5
-  _requiredRank: 0
-  _damage: 8
-  _speed: 4
-  _maxDurability: 30
+  _damageType: 1
   _attackRanges: 0100000002000000
+  _requiredRank: 0
+  _weight: 1
+  _might: 2
+  _hit: 100
+  _critical: 0
+  _effectiveAgainst: 
+  _maxDurability: 40

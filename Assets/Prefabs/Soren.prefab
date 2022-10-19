@@ -12,6 +12,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 7ba93050d7b8df846852eceb17dd0665, type: 2}
     - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: Data
+      value: 
+      objectReference: {fileID: 11400000, guid: 6d2b558017eba59459b8c14cb686655d, type: 2}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: 6d2b558017eba59459b8c14cb686655d, type: 2}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
       propertyPath: data._name
       value: Soren
       objectReference: {fileID: 0}

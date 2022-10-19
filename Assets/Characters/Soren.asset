@@ -9,14 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8db481bd6a1f74b4a81add95c2c09b8f, type: 3}
-  m_Name: Silver Axe
+  m_Script: {fileID: 11500000, guid: 883bc609c6601304c9303ffe059ccf63, type: 3}
+  m_Name: Soren
   m_EditorClassIdentifier: 
-  currentDurability: 0
-  _name: Silver Axe
-  _type: 1
-  _requiredRank: 5
-  _damage: 15
-  _speed: 2
-  _maxDurability: 50
-  _attackRanges: 01000000
+  _moveRange: 5
+  _maxHealth: 16
+  _speed: 4
+  _skill: 2
+  _strength: 0
+  _defence: 2
+  _magic: 3
+  _resistance: 4
+  _luck: 30
+  _class: 2
+  _team: 0
+  _name: Soren
+  _startPosition: {x: 6, y: 4}

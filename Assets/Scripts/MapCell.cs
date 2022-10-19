@@ -5,16 +5,18 @@ using UnityEngine.EventSystems;
 public class MapCell : MonoBehaviour
 {
     public Character Character;
+    public Map.CellType Type;
+    public GameObject Obstacle;
 
     private Vector2Int _position;
-    public Map.CellType Type;
 
     public Vector2Int Position => _position;
 
-    public void Initialize(Vector2Int position, Map.CellType type)
+    public void Initialize(Vector2Int position, Map.CellType type, GameObject obstacle)
     {
         _position = position;
         Type = type;
+        Obstacle = obstacle;
     }
 
     public void Focus()

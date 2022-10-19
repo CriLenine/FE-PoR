@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EditManager : MonoBehaviour
 {
-    public static EditManager instance;
+    public static EditManager Instance;
 
     [SerializeField] private Map _map;
 
@@ -16,8 +16,8 @@ public class EditManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
-            instance = this;
+        if (Instance == null)
+            Instance = this;
         else
             Destroy(gameObject);
     }
@@ -27,23 +27,23 @@ public class EditManager : MonoBehaviour
         MainManager.SaveData.LoadJson();
     }
 
-    public void Validate()
+    public void Validate(MapCell cell)
     {
         if (_currentInstantiatedPrefab)
         {
-            if (MainManager.CurrentCell.Character)
+            if (cell.Character)
                 return;
 
             if (_currentInstantiatedPrefab.transform.CompareTag(_TREENAME))
             {
-                MainManager.Map.CondemnedCells.Add(MainManager.CurrentCell.Position);
-                Destroy(MainManager.CurrentCell.gameObject);
+                MainManager.Map.CondemnedCells.Add(cell.Position);
+                cell.Obstacle = _currentInstantiatedPrefab;
             }
             _currentInstantiatedPrefab = null;
         }
-        else if(MainManager.CurrentCell.Character)
+        else if(cell.Character || cell.Obstacle)
         {
-            
+            //Open menu : delete or move
         }
     }
 

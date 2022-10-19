@@ -12,10 +12,12 @@ public class MainManager : MonoBehaviour
 
     private Vector2Int _cursorMoveDirection;
     private MapCell _currentCell;
+    private float _cursorMoveDelay = .1f;
+    private float _cursorMoveTimer = 0f;
+    private bool _cursorCanMove = true;
 
     public static Color Blue => new Color(171, 0, 0);
     public static Color Red => new Color(0, 96, 231);
-    public static MapCell CurrentCell => _instance._currentCell;
 
     public static Map Map
     {
@@ -35,8 +37,24 @@ public class MainManager : MonoBehaviour
         EditManager = GetComponent<EditManager>();
     }
 
+    public static void MapInitialized()
+    {
+        _instance._currentCell = Map.GetCell(Vector2Int.zero);
+        Map.GetCell(Vector2Int.zero).Focus();
+    }
+
     private void Update()
     {
+
+        if (!_cursorCanMove)
+        {
+            if ((_cursorMoveTimer += Time.deltaTime) > _cursorMoveDelay)
+            {
+                _cursorCanMove = true;
+                _cursorMoveTimer = 0f;
+            }
+        }
+
         _cursorMoveDirection = Vector2Int.zero;
         if (Input.GetKey(KeyCode.Z))
         {
@@ -57,23 +75,26 @@ public class MainManager : MonoBehaviour
 
         if (_cursorMoveDirection != Vector2Int.zero)
         {
-            MoveCursor(_cursorMoveDirection);
+            if (_cursorCanMove)
+                MoveCursor(_cursorMoveDirection);
         }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (GameManager != null)
-                GameManager.Validate();
+            if (GameManager != null && _currentCell.Obstacle == null)
+                GameManager.Validate(_currentCell);
             else if (EditManager != null)
-                EditManager.Validate();
+                EditManager.Validate(_currentCell);
             else
                 Debug.LogError("Manager missing !");
         }
     }
+
     private void MoveCursor(Vector2Int cursorMoveDirection)
     {
         if (Map.IsValidMove(_currentCell.Position, cursorMoveDirection, out Vector2Int newCoords))
         {
+            _cursorCanMove = false;
             _currentCell.LeaveFocus();
             MoveCursorVisual(_currentCell.Position, newCoords);
             _currentCell = Map.GetCell(newCoords);
@@ -97,7 +118,7 @@ public class MainManager : MonoBehaviour
         {
             if (character != null)
             {
-                UIManager.FocusCell(cell, cell.Type == Map.CellType.CanAttack && cell.Character.data.Team != GameManager.CurrentData.Team);
+                UIManager.FocusCell(cell, cell.Type == Map.CellType.CanAttack && cell.Character.Data.Team != GameManager.CurrentData.Team);
             }
         }
     }

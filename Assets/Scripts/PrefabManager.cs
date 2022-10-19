@@ -9,8 +9,8 @@ public class PrefabManager : MonoBehaviour
     [System.Serializable]
     public struct PrefabInfo
     {
-        public string name;
-        public GameObject prefab;
+        public string Name;
+        public GameObject Prefab;
     }
 
     public List<PrefabInfo> PrefabInfos;
@@ -20,13 +20,10 @@ public class PrefabManager : MonoBehaviour
     private void Awake()
     {
         _instance = this;
-    }
 
-    private void Start()
-    {
         foreach(PrefabInfo prefabInfo in PrefabInfos)
         {
-            Prefabs[prefabInfo.name] = prefabInfo.prefab;
+            Prefabs[prefabInfo.Name] = prefabInfo.Prefab;
         }
     }
 }

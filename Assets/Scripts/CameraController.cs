@@ -14,10 +14,6 @@ public class CameraController : MonoBehaviour
     private void Awake()
     {
         Instance ??= this;
-    }
-
-    private void Start()
-    {
         _target = transform.position;
     }
     private void Update()
@@ -28,6 +24,6 @@ public class CameraController : MonoBehaviour
 
     public void CameraFocus(Vector3 cellPosition)
     {
-        _target = cellPosition + _offset;    
+        _target = cellPosition + _offset;
     }
 }

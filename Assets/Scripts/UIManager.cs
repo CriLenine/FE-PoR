@@ -18,12 +18,12 @@ public class UIManager : MonoBehaviour
         if (PlayingManager)
         {
             if (showInfos)
-                PlayingManager.DisplayAttackInfos(cell.Character.data);
+                PlayingManager.DisplayAttackInfos(MainManager.GameManager.CurrentCharacter, cell.Character);
             else
                 PlayingManager.HideAttackInfos();
 
             if (cell.Character != null)
-                PlayingManager.DisplayCharacterInfos(cell.Character.data);
+                PlayingManager.DisplayCharacterInfos(cell.Character);
         }
     }
 

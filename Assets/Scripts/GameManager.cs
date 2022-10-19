@@ -39,7 +39,8 @@ public class GameManager : MonoBehaviour
     public bool DisplayActionMenu => _displayActionMenu;
     public Vector3 ActionMenuAnchor => _actionMenuAnchor;
     public bool HasATarget => _hasATarget;
-    public CharacterData CurrentData => _currentCharacter.data;
+    public CharacterData CurrentData => _currentCharacter.Data;
+    public Character CurrentCharacter => _currentCharacter;
     public Map Map => _map;
 
     #region START/UPDATE
@@ -47,13 +48,11 @@ public class GameManager : MonoBehaviour
     {
         _astarMain = new AStar.Main();
 
-        _map.Initialize();
-
-        _allCharacters = _map.InitCharacters(_startCharacters);
+        _allCharacters = _map.Initialize(_characters: _startCharacters);
 
         foreach (Character character in _allCharacters)
         {
-            if (character.data.Team == _currentTeam)
+            if (character.Data.Team == _currentTeam)
                 _charactersToPlay.Add(character);
         }
 
@@ -75,34 +74,35 @@ public class GameManager : MonoBehaviour
             if (_whereToMove.Count == 0)
             {
                 _characterIsMoving = false;
-                CharacterHasMoved();
+                CharacterHasMoved(_lastSelectedCell);
             }
         }
     }
 
     #endregion
 
-    public void Validate()
+    public void Validate(MapCell cell)
     {
         if (_characterIsMoving)
             return;
 
         if (_step == GameStep.None)
         {
-            if (MainManager.CurrentCell.Character != null)
+            if (cell.Character != null)
             {
-                if (_charactersToPlay.Contains(MainManager.CurrentCell.Character))
-                    SelectCharacter(MainManager.CurrentCell);
+                if (_charactersToPlay.Contains(cell.Character))
+                    SelectCharacter(cell);
             }
         }
-        else if (_step == GameStep.ChoosingDestination && MainManager.CurrentCell.Type == Map.CellType.CanMoveTo)
-            MoveCharacter(MainManager.CurrentCell);
+        else if (_step == GameStep.ChoosingDestination && cell.Type == Map.CellType.CanMoveTo)
+            MoveCharacter(cell);
 
-        else if (_step == GameStep.ChoosingTarget && MainManager.CurrentCell.Type == Map.CellType.CanAttack)
+        else if (_step == GameStep.ChoosingTarget && cell.Type == Map.CellType.CanAttack)
         {
             _hasATarget = false;
             ResetCells();
-            Fight(_lastSelectedCell, MainManager.CurrentCell);
+            Fight(_lastSelectedCell, cell);
+            cell.Focus();
             EndCharacterTurn();
         }
     }
@@ -115,7 +115,7 @@ public class GameManager : MonoBehaviour
 
         _step = GameStep.ChoosingDestination;
         _visitedCoords.Clear();
-        ShowReachableCells(cell.Position, cell.Character.data.Range);
+        ShowReachableCells(cell.Position, cell.Character.Data.MoveRange);
 
         //add the obstacles
         for (int x = 0; x < _map.Width; x++)
@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
             return;
         if (cell.Character != null)
         {
-            if (cell.Character.data.Team != _currentTeam)
+            if (cell.Character.Data.Team != _currentTeam)
                 return;
         }
         _visitedCoords[currentRange].Add(currentPos);
@@ -160,31 +160,31 @@ public class GameManager : MonoBehaviour
     private void MoveCharacter(MapCell cell)
     {
         if (cell == _lastSelectedCell)
-            CharacterHasMoved();
+            CharacterHasMoved(cell);
         else
         {
             _lastSelectedCell.Character = null;
             cell.Character = _currentCharacter;
-
+            _lastSelectedCell = cell;
             // use Astar pathfinding
-            List<Vector2Int> path = _astarMain.aStarSearch(pathfindingGrid.array, _currentCharacter.data.position, MainManager.CurrentCell.Position);
+            List<Vector2Int> path = _astarMain.aStarSearch(pathfindingGrid.array, _currentCharacter.Position, cell.Position);
             for (int i = 0; i < path.Count; i++)
             {
                 _whereToMove.Add(_map.GetCell(path[i]).transform.position + Vector3.up * (_map.CharactersAltitude - _map.Altitude));
             }
 
-            //character will move in the update method because whereToMove is not empty
+            //character will move in the update method since whereToMove is not empty
         }
     }
 
-    private void CharacterHasMoved()
+    private void CharacterHasMoved(MapCell cell)
     {
         _characterIsMoving = false;
-        _currentCharacter.data.position = MainManager.CurrentCell.Position;
+        _currentCharacter.Position = cell.Position;
 
         ResetCells();
 
-        _actionMenuAnchor = _map.GetWorldPosition(MainManager.CurrentCell.Position);
+        _actionMenuAnchor = _map.GetWorldPosition(cell.Position);
         _displayActionMenu = true;
         _step = GameStep.ChoosingAction;
         _targetableCells.Clear();
@@ -200,7 +200,7 @@ public class GameManager : MonoBehaviour
             for (int y = 0; y < _map.Height; y++)
             {
                 Vector2Int vect = new Vector2Int(x, y);
-                if (_currentCharacter.data.CanAttackAtRange(_astarMain.CalculateHValue(_currentCharacter.data.position, vect)))
+                if (_currentCharacter.Data.CanAttackAtRange(_astarMain.CalculateHValue(_currentCharacter.Position, vect)))
                 {
                     MapCell cell = _map.GetCell(vect);
                     if (cell != null)
@@ -208,7 +208,7 @@ public class GameManager : MonoBehaviour
                         _targetableCells.Add(cell);
                         if (cell.Character != null)
                         {
-                            if (cell.Character.data.Team != _currentTeam)
+                            if (cell.Character.Data.Team != _currentTeam)
                                 _hasATarget = true;
                         }
                     }
@@ -226,7 +226,7 @@ public class GameManager : MonoBehaviour
             cell.GetComponent<MeshRenderer>().material = _map.CellMaterials[Map.CellType.CanAttack];
             if (cell.Character != null)
             {
-                if (cell.Character.data.Team != _currentTeam)
+                if (cell.Character.Data.Team != _currentTeam)
                     cell.Type = Map.CellType.CanAttack;
             }
         }
@@ -239,29 +239,49 @@ public class GameManager : MonoBehaviour
 
         int distance = _astarMain.CalculateHValue(attackingCell.Position, defendingCell.Position);
 
+        int attackSpeedDelta = attackingCell.Character.Data.AttackSpeed - defendingCell.Character.Data.AttackSpeed;
+
         attackingCell.Character.Attack(defendingCell.Character);
 
-        if (defendingCell.Character.data.currentHealth <= 0)
+        if (!HandleDeath(defendingCell.Character))
         {
-            _allCharacters.Remove(defendingCell.Character);
-            CharacterData.CharacterTeam t = defendingCell.Character.data.Team;
-            Destroy(defendingCell.Character.gameObject);
-            if (!_allCharacters.Exists(x => x.data.Team == t))
-                EndGame();
+            //CounterAttack
+            if (defendingCell.Character.Data.Weapon.AttackRanges.Contains(distance))
+            {
+                defendingCell.Character.Attack(attackingCell.Character);
+
+                if(!HandleDeath(attackingCell.Character))
+                {
+                    //Third Attack
+                    if(attackSpeedDelta > 3)
+                    {
+                        attackingCell.Character.Attack(defendingCell.Character);
+
+                        HandleDeath(defendingCell.Character);
+                    }
+                    else if(attackSpeedDelta < -3)
+                    {
+                        defendingCell.Character.Attack(attackingCell.Character);
+
+                        HandleDeath(attackingCell.Character);
+                    }
+                }
+            }
         }
 
-        else if (defendingCell.Character.data.weapons[0].AttackRanges.Contains(distance))
-        {
-            defendingCell.Character.Attack(attackingCell.Character);
 
-            if (attackingCell.Character.data.currentHealth <= 0)
+        bool HandleDeath(Character attackedCharacter)
+        {
+            if (attackedCharacter.CurrentHealth <= 0)
             {
-                CharacterData.CharacterTeam t = attackingCell.Character.data.Team;
-                _allCharacters.Remove(attackingCell.Character);
-                Destroy(attackingCell.Character.gameObject);
-                if (!_allCharacters.Exists(x => x.data.Team == t))
+                CharacterData.CharacterTeam t = attackedCharacter.Data.Team;
+                _allCharacters.Remove(attackedCharacter);
+                Destroy(attackedCharacter.gameObject);
+                if (!_allCharacters.Exists(x => x.Data.Team == t))
                     EndGame();
+                return true;
             }
+            return false;
         }
     }
     #endregion
@@ -287,14 +307,14 @@ public class GameManager : MonoBehaviour
         else //if (_currentTeam == CharacterData.Team.Enemy)
             nextTeam = CharacterData.CharacterTeam.Ally;
 
-        if (!_allCharacters.Exists(x => x.data.Team == nextTeam))
+        if (!_allCharacters.Exists(x => x.Data.Team == nextTeam))
             EndGame();
         else
         {
             _currentTeam = nextTeam;
             foreach (Character character in _allCharacters)
             {
-                if (character.data.Team == nextTeam)
+                if (character.Data.Team == nextTeam)
                     _charactersToPlay.Add(character);
             }
             UIManager.PlayingManager.phaseText.text = $"{nextTeam} phase";

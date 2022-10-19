@@ -66,7 +66,7 @@ public class SaveData : MonoBehaviour
                 cell = MainManager.Map.GetCell(x, y);
                 if(cell.Character != null)
                 {
-                    _prefabsToSave.Add((cell.Character.data.Name, new Vector2Int(x, y)));
+                    _prefabsToSave.Add((cell.Character.Data.Name, new Vector2Int(x, y)));
                 }
             }
         }
@@ -91,10 +91,9 @@ public class SaveData : MonoBehaviour
             if(data.s == "Tree")
                 treeCells.Add(data.v);
             else
-                characters.Add(PrefabManager.Prefabs[data.s].GetComponent<Character>().data);
+                characters.Add(PrefabManager.Prefabs[data.s].GetComponent<Character>().Data);
         }
-        MainManager.Map.Initialize(treeCells);
-        return MainManager.Map.InitCharacters(characters);
+        return MainManager.Map.Initialize(characters, treeCells);
     }
 
     private void WriteToFile(int index, string json)

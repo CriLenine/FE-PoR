@@ -12,6 +12,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 890c6eeb0c1d8a1409f869e89dec2002, type: 2}
     - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: Data
+      value: 
+      objectReference: {fileID: 11400000, guid: ebce087c58ad6a4468039699060f69ee, type: 2}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: ebce087c58ad6a4468039699060f69ee, type: 2}
+    - target: {fileID: 3731975503915618795, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
       propertyPath: data._name
       value: Ashnard
       objectReference: {fileID: 0}
@@ -89,7 +97,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5742947779275107806, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
       propertyPath: m_Name
-      value: Ashnard
+      value: Mercenary
       objectReference: {fileID: 0}
     - target: {fileID: 5913887314314973503, guid: 02656f8093a4a8b47abca646593fabd6, type: 3}
       propertyPath: m_Color.b

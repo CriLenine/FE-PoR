@@ -42,7 +42,7 @@ public class Map : MonoBehaviour
         }
     }
 
-    public void Initialize(List<Vector2Int> condemnedCells = null)
+    public List<Character> Initialize(List<CharacterData> _characters, List<Vector2Int> condemnedCells = null)
     {
         condemnedCells ??= _condemnedCells;
         for (int x = 0; x < Height; x++)
@@ -54,50 +54,52 @@ public class Map : MonoBehaviour
 
                 if (condemnedCells.Contains(new Vector2Int(x, y)))
                 {
-                    Instantiate(_prefabTree, position, Quaternion.Euler(0f, UnityEngine.Random.value * 360f, 0f));
+                    GameObject obstacle = Instantiate(_prefabTree, position, Quaternion.Euler(0f, UnityEngine.Random.value * 360f, 0f));
+                    AddCell(x, y, obstacle);
                     continue;
                 }
 
-                AddCell(x, y);
+                AddCell(x, y, null);
             }
         }
 
         if(MainManager.GameManager)
             ResetPathfindingGrid();
+        return InitCharacters();
+
+        List<Character> InitCharacters()
+        {
+            List<Character> characters = new List<Character>();
+            foreach (CharacterData data in _characters)
+            {
+                GameObject characterGo = Instantiate(
+                    PrefabManager.Prefabs[data.Name],
+                    GetWorldPosition(data.StartPosition) + Vector3.up * _charactersAltitude,
+                    Quaternion.identity
+                    );
+
+                Character character = characterGo.GetComponent<Character>();
+
+                characters.Add(character);
+
+                MapCell cell = GetCell(data.StartPosition);
+                cell.Character = character;
+            }
+            MainManager.MapInitialized();
+            return characters;
+        }
     }
 
-    private void AddCell(int x, int y)
+    private void AddCell(int x, int y, GameObject obstacle)
     {
         Vector3 position = GetWorldPosition(x, y);
         position.y = _altitude;
 
         GameObject cellGo = Instantiate(_prefabCell, position, Quaternion.identity);
         MapCell cell = cellGo.GetComponent<MapCell>();
-        cell.Initialize(new Vector2Int(x, y), CellType.None);
+        cell.Initialize(new Vector2Int(x, y), CellType.None, obstacle);
         _grid[x, y] = cell;
         cellGo.transform.SetParent(transform);
-    }
-
-    public List<Character> InitCharacters(List<CharacterData> _characters)
-    {
-        List<Character> characters = new List<Character>();
-        foreach (CharacterData data in _characters)
-        {
-            GameObject characterGo = Instantiate(
-                data.Prefab,
-                GetWorldPosition(data.StartPosition) + Vector3.up * _charactersAltitude,
-                Quaternion.identity
-                );
-
-            Character character = characterGo.GetComponent<Character>();
-            character.data = data;
-
-            characters.Add(character);
-
-            MapCell cell = GetCell(data.position);
-            cell.Character = character;
-        }
-        return characters;
     }
 
     public void ResetPathfindingGrid()
@@ -140,9 +142,6 @@ public class Map : MonoBehaviour
     {
         newCoords = coords + shift;
         bool valid = !(newCoords.x < 0 || newCoords.y < 0 || newCoords.x > Width || newCoords.y > Height);
-        if(valid)
-            return true;
-        newCoords = coords;
-        return false;
+        return valid;
     }
 }
